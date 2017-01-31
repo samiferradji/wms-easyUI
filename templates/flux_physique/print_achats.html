@@ -1,0 +1,128 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bon de reception N° {{ recption.id }} ({{ type_mouvement }})</title>
+
+    <style>
+        @font-face {
+            font-family: code39;
+            src: url('{% static 'fonts/code39-1.ttf '%}');
+            }
+        h1 {
+            font-family: "Arial Unicode MS";
+            font-size: 16px;
+            }
+        body {
+            font-family: "Arial Unicode MS";
+            font-size: 12px;
+            width: 90%;
+            }
+        table, td, th {
+            border: 1px solid;
+            }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            }
+        th {
+            height: 30px;
+            }
+        td {
+            padding: 3px;
+            }
+        .code_barre {
+            font-family: code39;
+            font-size: 30px;
+            padding: 5px
+            }
+
+</style>
+</head>
+<body>
+<table>
+    <tr>
+        <th>N° BR</th>
+        <th>Date BR</th>
+        <th>Facture</th>
+        <th>Fournisseur</th>
+        <th>Observation</th>
+        <th>Statut</th>
+        <th>Créé par</th>
+    </tr>
+    <tr>
+        <td>{{ recption.n_BL }}</td>
+        <td>{{ recption.date_entree }}</td>
+        <td>{{ recption.n_FAC }}</td>
+        <td>{{ recption.fournisseur }}</td>
+        <td>{{ recption.observation }}</td>
+        <td>{{ recption.statut_doc }}</td>
+        <td>{{ recption.created_by.first_name}} {{ recption.created_by.last_name}}</td>
+    </tr>
+</table>
+<br>
+<br>
+<table>
+    <tr>
+        <th>Produit</th>
+        <th>N° Lot</th>
+        <th>DDP</th>
+        <th>P.Achat</th>
+        <th>P.Vente</th>
+        <th>TVA</th>
+        <th>SHP</th>
+        <th>PPA</th>
+        <th>Empl</th>
+        <th>Qtt</th>
+        <th>Colisage</th>
+        <th>NBR Colis</th>
+        <th>VRAC</th>
+        <th>Statut</th>
+    </tr>
+    {% for item in details_reception %}
+    <tr>
+
+        <td>{{ item.produit__produit}}
+            {{ item.produit__dci__dosage}}
+            {{ item.dci__forme_phrmaceutique__forme}}
+            {{ item.produit__conditionnement}}
+        </td>
+        <td>{{ item.n_lot}}</td>
+        <td>{{ item.date_peremption.isoformat}}</td>
+        <td>{{ item.prix_achat}}</td>
+        <td>{{ item.prix_vente}}</td>
+        <td>{{ item.taux_tva}}</td>
+        <td>{{ item.shp}}</td>
+        <td>{{ item.ppa_ht}}</td>
+        <td>{{ item.emplacement__emplacement}}</td>
+        <td>{{ item.qtt}}</td>
+        <td>{{ item.colisage}}</td>
+        <td>{{ item.colis}}</td>
+        <td>{{ item.vrac}}</td>
+        <td>{{ item.conformite__statut}}</td>
+        </tr>
+        {% endfor %}
+</table>
+
+<br>
+<br>
+<footer>
+    <table>
+        <tr>
+            <td style="width:25%">Exécuté par :</td>
+            <td style="width:25%">1.</td>
+            <td style="width:25%">2.</td>
+            <td style="width:25%">3.</td>
+        </tr>
+        <tr>
+            <td style="width:25%">Signature :</td>
+            <td style="width:25%"></td>
+            <td style="width:25%"></td>
+            <td style="width:25%; padding-bottom: 30px"></td>
+        </tr>
+    </table>
+
+</footer>
+</body>
+</html>

@@ -1,0 +1,449 @@
+{% load bootstrap3 %}
+      <section class="content-header">
+      <h1>
+        Transfert
+      </h1>
+
+    </section>
+           <section class="content-header">
+        <button id="add_produit" class="btn btn-primary" style="margin-right: 7px; margin-bottom: 2%" disabled>Ajouter</button>
+        <button id="save" class="btn btn-success" style="margin-right: 7px; margin-bottom: 2%"disabled>Enregistrer</button>
+        <button id="cancel_all" class="btn btn-danger" style="margin-right: 7px; margin-bottom: 2%"disabled>Annuler</button>
+    </section>
+           <section class="content">
+          <div class="box">
+             <div class="box-content" style="margin-top: 1%; margin-bottom: 1%">
+                 <div class="row">
+                     <div class="col-lg-1"></div>
+                     <div class="col-lg-3 ">
+                         {% bootstrap_field form.depuis_magasin %}
+                         </div>
+                     <div class="col-lg-3">
+                         {% bootstrap_field form.vers_magasin %}
+                         </div>
+                     </div>
+                 </div>
+<div id="myModal" class="modal" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Ajouter depuis magasin <strong id="magasin_encours"></strong></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <label for="input_keys">Recherche</label>
+                        <input id="current_entete" class="hidden" value="0">
+                        <input id="input_keys" class="form-control">
+                        </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <label for="select_product">Produits</label>
+                        <select id="select_product" class="form-control"></select>
+                        </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <label for="cg">Lot</label>
+                        <select id="cg" class="form-control" type="text" style="width: 100%"></select>
+                    </div>
+                </div>
+
+
+            <div class="row" style="margin-top: 3%">
+                <div class="col-lg-4">
+                    <input type="number" class="form-control" id="input_qtt" placeholder="Quantité"
+                           data-toggle="popover" data-trigger="focus"
+                           data-content="" required>
+                </div>
+                <p id="p1"></p>
+            </div>
+        </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" id="ajouter_ligne_button" >Ajouter</button>
+        <button class="btn btn-default" data-dismiss="modal">Fermer</button>
+    </div>
+    </div>
+    </div>
+    </div>
+              </div>
+    <div class="box">
+        <div class="box-header"> Transfert en cours...</div>
+        <div class="box-body">
+        <table id="mytable" class="table">
+            <th></th>
+            <th>N</th>
+            <th>Produit</th>
+            <th>Lot</th>
+            <th>DDP</th>
+            <th>PPA</th>
+            <th>Empl</th>
+            <th>Magasin</th>
+            <th>Clsg</th>
+            <th>Quantité</th>
+            <th>Vrac</th>
+            <th>Colis</th>
+
+        </table>
+            </div>
+    </div>
+
+      </section>
+<script>
+    $(document).ready(function() {
+        $('#entrepot_menu').addClass('active');
+        $('#transfert').addClass('active');
+        $("body,input,select").bind("keydown", function(e){
+             if (e.which == 107)
+             {
+                 if (!$('#add_produit').prop('disabled'))
+                 {
+                     e.stopPropagation();
+                     e.preventDefault();
+                     $('#add_produit').click()
+                 }
+             }
+             
+             if (e.which == 109)
+             {
+                 $("#input_keys").focus()
+                 e.stopPropagation();
+                 e.preventDefault();
+                 $("#select_product").val('')
+                 $("#input_qtt").val('')
+                 clear_lot_combogrid()
+                 }
+         })
+        $('#input_keys').keypress(function (e) {
+            if (e.which == 13) {
+                update_prducts_list()
+                $('#select_product').focus();
+                $('#select_product').click();
+            }
+        })
+        function update_prducts_list() {
+            var current_magasin_id = $('#depuis_magasin_select').val();
+            var key_words = $('#input_keys').val();
+            $.post("/produits-par-magasin/",
+                {
+                    key_words: key_words,
+                    current_magasin_id:current_magasin_id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                }
+                )
+                .done(
+                            function (content) {
+                                $('#select_product').find('option').remove();
+                                var optionHTML = '';
+                                $.each(content['content'], function (i, item) {
+                                    optionHTML += '<option value='+item.produit_id+'>'+item.produit__produit+'</option>'
+                                });
+                                $('#select_product').append(optionHTML);
+                });
+        }
+        $('#vers_magasin_select').prop("disabled", true);
+        $('#depuis_magasin_select').focus();
+        $('#depuis_magasin_select').change(function (){
+            var depuis_magasin_text = $('#depuis_magasin_select option:selected').text();
+            $('#magasin_encours').append(depuis_magasin_text)
+            $('#vers_magasin_select').prop("disabled", false);
+            $('#depuis_magasin_select').prop("disabled", true);
+            $('#vers_magasin_select').focus();
+            $.post("/add-entete-reservation/",
+                    {
+                        transaction: "Transfert",
+                        created_by: {{ user.id }},
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    function (content, status) {
+                        $('#current_entete').val(content['content']);
+                    });
+        })
+        $('#vers_magasin_select').change(function () {
+            $('#vers_magasin_select').prop("disabled", true);
+            $("#add_produit").click();
+            $('#add_produit').prop('disabled', false);
+            });
+        $("#add_produit").click(function () {
+            $("#myModal").modal({backdrop: "static", keyboard: true});
+            $("#input_keys").focus();
+        });
+        function update_table(current) {
+            $.getJSON('/reservation-table/', {current_entete: current})
+                    .done(
+                            function (content) {
+                                $('#mytable').find('td').remove();
+                                var trHTML = '';
+                                $.each(content['content'], function (i, item) {
+                                    trHTML += '<tr><td><div id="TrashButton' + i + '" current_id = ' + item[11]
+                                            + ' class="MyAction glyphicon glyphicon-trash" '
+                                            + 'style="cursor:pointer;color:red"></div></td><td>' + (i + 1)
+                                            + '</td><td>' + item[0] + ' ' + item[1] + ' ' + item[2]
+                                            + ' ' + item[3]
+                                            + '</td><td>' + item[4]
+                                            + '</td><td>' + item[5]
+                                            + '</td><td>' + item[6]
+                                            + '</td><td>' + item[7]
+                                            + '</td><td>' + item[8]
+                                            + '</td><td>' + item[9]
+                                            + '</td><td>' + item[10]
+                                            + '</td><td>' + item[12]
+                                            + '</td><td>' + item[13]
+                                            + '</td></tr>';
+                                });
+                                $('#mytable').append(trHTML);
+                                $('.MyAction').click(function () {
+                                    var id_row = $(this).attr('current_id');
+                                    delete_row(id_row, current);
+                                });
+                            });
+        }
+        function delete_row(id_row, current_entete) {
+            $.post("/add-ligne-reservation/",
+                    {
+                        action: 'delete',
+                        id_reservation: id_row,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    }).done(function (data) {
+                if (data.content == 'OK') {
+                    update_table(current_entete);
+                    if (data.content == 'OK') {
+                        $.notify('Ligne supprimée', 'success');
+                        }
+                }
+            });
+        }
+        function save_all() {
+                var current_entete = $('#current_entete').val();
+                var depuis_magasin = $('#depuis_magasin_select').val();
+                var vers_magasin = $('#vers_magasin_select').val();
+                var statut_doc = $('#statut_doc').val();
+                $.post("/add-ligne-reservation/",
+                        {
+                            depuis_magasin: depuis_magasin,
+                            vers_magasin: vers_magasin,
+                            created_by:{{user.id}},
+                            current_entete: current_entete,
+                            motif:1,
+                            action: 'save_transfert',
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        }).done(function (data) {
+                    if (data.content[0] == 'OK') {
+                        refresh()
+                        $.notify('Bon de transfert enregistré', 'success');
+                        $.post('/print_transfert/', {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            id_transfert:data.content[1]
+                        },function (data) {
+                            var w = window.open('about:blank', 'windowname');
+                            w.document.write(data.content);
+                            w.document.close()
+                            });
+                        }
+                        else {
+                        $.notify("Erreur d'enregistrement!")
+                    }
+                        })
+            }
+        function cancel_all() {
+                var current_entete = $('#current_entete').val();
+                $.post("/add-ligne-reservation/",
+                        {
+                            action: 'cancel',
+                            current_entete: current_entete,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        }).done(function () {
+                            refresh()
+                    })
+            }
+        function refresh() {
+            $('#current_entete').val('')
+            $('#mytable').find('td').remove();
+            $('#add_produit').prop('disabled', true)
+            $('#cancel_all').prop('disabled', true)
+            $('#save').prop('disabled', true)
+            $('input').val('');
+            $('select').val('');
+            $('#magasin_encours').empty();
+            $('#depuis_magasin_select').prop('disabled', false);
+            $('#vers_magasin_select').prop('disabled', true);
+            $('#depuis_magasin_select').focus()
+            clear_lot_combogrid()
+        }
+        function clear_lot_combogrid() {
+             $('#cg').combogrid('clear');
+             $('#cg').combogrid({panelWidth: 850, data:[]});
+             $('#cg').combogrid('hidePanel');
+             $('#input_keys').focus();
+             }
+        $("#select_product").keypress(function (e) {
+            if (e.which == 13) {
+                e.stopPropagation();
+                e.preventDefault();
+                var current_magasin = $('#depuis_magasin_select').val()
+                var current_produit = $(this).val();
+                $.getJSON('/stock-disponible/', {
+                    'current_produit': current_produit,
+                    'current_magasin': current_magasin
+                }).done(function (dispo_data) {
+                    var mydata = dispo_data.content;
+                    $('#cg').combogrid({
+                        panelWidth: 930,
+                        data: mydata,
+                        idField: 'first_id',
+                        textField: 'n_lot',
+                        mode: 'local',
+                        fitColumns: true,
+                        columns: [[
+                            {field: 'n_lot', title: 'Lot', width: 90},
+                            {field: 'date_peremption', title: 'DDP', width: 100},
+                            {field: 'ppa_ht', title: 'PPA', width: 70},
+                            {field: 'emplacement__emplacement', title: 'Empl', width: 70},
+                            {field: 'emplacement__magasin__magasin', title: 'Magasin', width: 80},
+                            {field: 'sum_totale', title: 'Total', width: 80},
+                            {field: 'sum_encours_out', title: 'En cours(-)', width: 80},
+                            {field: 'sum_encours_in', title: 'En cours(+)', width: 80},
+                            {field: 'sum_disponible', title: 'Disponible', width: 80},
+                            {field: 'sum_reserved', title: 'Affecté', width: 80},
+                            {field: 'conformite__statut', title: 'Statut', width: 100},
+                        ]]
+                    });
+
+                    $('#cg').combogrid(
+                        {
+                            onLoadSuccess: function (param) {
+                                $('.textbox-text').clear;
+                                $('#cg').combogrid('showPanel');
+                                $('.textbox-text').focus();
+                            }
+                        });
+                    $('#cg').combogrid({
+                        'onHidePanel': function () {
+                            var current_id_stock = $('#cg').combogrid('getValue');
+                            var current_id_stock_int = parseInt(current_id_stock, 10);
+                            $.getJSON("/qtt-disponible/",
+                                {
+                                    current_id_stock: current_id_stock_int,
+                                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                                }).done(function (result) {
+                                var data = ''
+                                $.each(result.content, function (i, field) {
+                                    data += '<div>' + '<table>' +
+                                        '<tr><td>' + 'Péremption' + '</td><td>' + field.date_peremption + '</td></tr>' +
+                                        '<tr><td>' + 'PPA' + '</td><td>' + field.ppa_ht + '</td></tr>' +
+                                        '<tr><td>' + 'colisage' + '</td><td>' + field.colisage + '</td></tr>' +
+                                        '<tr><td>' + 'disponible' + '</td><td>' + '<strong>'
+                                        + field.sum_disponible + '</strong>' + '</td></tr>' +
+                                        '<tr><td>' + 'Nbr colis' + '</td><td>' + field.colis + '</td></tr>' +
+                                        '<tr><td>' + 'Vrac' + '</td><td style="color: red">' + field.vrac + '</td></tr>' +
+                                        '<tr><td>' + 'Statut' + '</td><td>' + field.conformite__statut + '</td></tr>' +
+                                        '</div>'
+
+
+                                });
+                                $('#input_qtt').attr("data-content", data);
+                                $('#input_qtt').focus();
+                            })
+
+                        }
+                    });
+
+                });
+            }
+        });
+        $("#ajouter_ligne_button").click(function () {
+                var current_entete = $('#current_entete').val();
+                var new_id_stock = $('#cg').combogrid('getValue');
+                var new_id_stock_int = parseInt(new_id_stock, 10);
+                var qtt = $('#input_qtt').val();
+                if (new_id_stock){
+                if (qtt && qtt != 0) {
+                    $('#input_qtt').prop('disabled', true);
+                    $.post("/add-ligne-reservation/",
+                            {
+                                action: 'add',
+                                entete_tempo: current_entete,
+                                id_stock: new_id_stock_int,
+                                qtt: qtt,
+                                csrfmiddlewaretoken: '{{ csrf_token }}'
+                            }).done(function (data) {
+                        if (data.content == 'OK') {
+                            update_table(current_entete);
+                            $('#select_product').notify('Produit ajouté', {
+                                position: 'right',
+                                className: 'success',
+                                autoHideDelay: 1500,
+                            });
+                            $('#save').prop('disabled', false);
+                            $('#cancel_all').prop('disabled', false)
+                            $(this).prop("disabled", false);
+                            $("#input_qtt").val('');
+                            $("#select_product").val('')
+                            $("#input_keys").val('');
+                            clear_lot_combogrid()
+                            $('#input_qtt').prop('disabled', false);
+                        }
+                        else  {
+                            $('#input_qtt').focus();
+                            $('#input_qtt').notify(data.content, {
+                                position: 'left',
+                                className: 'error',
+                                autoHideDelay: 1500,
+                            });
+                            $('#input_qtt').prop('disabled', false);
+                            $('#input_qtt').focus();
+                        }
+                    });
+                }
+                else {
+                    $('#input_qtt').notify('Champ obligatoire', {
+                                position: 'left',
+                                className: 'error',
+                                autoHideDelay: 1500,
+                            });
+                    $('#input_qtt').prop('disabled', false);
+                    $('#input_qtt').focus
+                }
+                }
+                else {
+                    $('#cg').notify('Champ obligatoire', {
+                                position: 'right',
+                                className: 'error',
+                                autoHideDelay: 1500,
+                            });
+                    $('#cg').combogrid().focus();
+
+                }
+            });
+        $('#input_qtt').keypress(function (e) {
+                if (e.which == 13) {
+                    $('#ajouter_ligne_button').click();
+                }
+            });
+        $('#save').click(function () {
+                save_all()
+            });
+        $( window ).bind( 'beforeunload' , function( event ) {
+            setTimeout( function() {
+                cancel_all()
+                });
+            return '';
+            }).bind( 'unload', function( event ) {
+            alert( 'Goodby!' );
+            } );
+        $('#cancel_all').click(function () {
+            cancel_all();
+            });
+        $(function () {
+            $('[data-toggle="popover"]').popover({
+                html : true,
+                placement:'right',
+                template :'<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content" style="width:200px;"></div></div>'
+            });
+        })
+    });
+</script>
+
+

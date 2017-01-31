@@ -1,0 +1,338 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import migrations, models
+from django.conf import settings
+import django.db.models.deletion
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('refereces', '0005_auto_20161011_1431'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='AchatsFournisseur',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('n_BL', models.CharField(max_length=15, verbose_name='Numéro de BL')),
+                ('curr_exercice', models.IntegerField(default=2016, verbose_name='Exrcice en cours')),
+                ('date_entree', models.DateField(verbose_name='Date de BL')),
+                ('n_FAC', models.CharField(null=True, max_length=15, verbose_name="Numéro de Facture d'achat")),
+                ('observation', models.TextField(null=True, max_length=200)),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('fournisseur', models.ForeignKey(verbose_name='Fournissur', on_delete=django.db.models.deletion.PROTECT, to='refereces.Founisseur')),
+                ('statut_doc', models.ForeignKey(verbose_name='Statut du document', on_delete=django.db.models.deletion.PROTECT, to='refereces.StatutDocument')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='CommandesClient',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('curr_exercice', models.IntegerField(default=2016, verbose_name='Exrcice en cours')),
+                ('n_commande', models.CharField(max_length=10, verbose_name='Numéro de commande')),
+                ('date_commande', models.DateField(verbose_name='Date de la commande')),
+                ('client', models.ForeignKey(verbose_name='Client', on_delete=django.db.models.deletion.PROTECT, to='refereces.Client')),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('statut_doc', models.ForeignKey(verbose_name='Statut du document', on_delete=django.db.models.deletion.PROTECT, to='refereces.StatutDocument')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='DetailsAchatsFournisseur',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('prix_achat', models.DecimalField(decimal_places=2, max_digits=9, verbose_name="Prix d'achat HT")),
+                ('prix_vente', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Prix de vente HT')),
+                ('taux_tva', models.IntegerField(verbose_name='Taux TVA')),
+                ('shp', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='SHP')),
+                ('ppa_ht', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='PPA')),
+                ('n_lot', models.CharField(max_length=20, verbose_name='Numéro du lot')),
+                ('date_peremption', models.DateField(verbose_name='Date de péremption')),
+                ('colisage', models.IntegerField(verbose_name='Colisage')),
+                ('poids_boite', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Poids boite')),
+                ('volume_boite', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Volume boite')),
+                ('poids_colis', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Poids du Colis')),
+                ('qtt', models.IntegerField(verbose_name='Quantité')),
+                ('conformite', models.ForeignKey(verbose_name='Statut Produit', on_delete=django.db.models.deletion.PROTECT, to='refereces.StatutProduit')),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('emplacement', models.ForeignKey(verbose_name='Emplacement', on_delete=django.db.models.deletion.PROTECT, to='refereces.Emplacement')),
+                ('entete', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='flux_physique.AchatsFournisseur')),
+                ('produit', models.ForeignKey(verbose_name='Produit', on_delete=django.db.models.deletion.PROTECT, to='refereces.Produit')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='DetailsCommandeClient',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('prix_achat', models.DecimalField(decimal_places=2, max_digits=9, verbose_name="Prix d'achat HT")),
+                ('prix_vente', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Prix de vente HT')),
+                ('taux_tva', models.IntegerField(verbose_name='Taux TVA')),
+                ('shp', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='SHP')),
+                ('ppa_ht', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='PPA')),
+                ('n_lot', models.CharField(max_length=20, verbose_name='Numéro du lot')),
+                ('date_peremption', models.DateField(verbose_name='Date de péremption')),
+                ('colisage', models.IntegerField(verbose_name='Colisage')),
+                ('qtt', models.IntegerField(verbose_name='Quantité')),
+                ('commande_client', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='flux_physique.CommandesClient')),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('produit', models.ForeignKey(verbose_name='Produit', on_delete=django.db.models.deletion.PROTECT, to='refereces.Produit')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='DetailsFacturesClient',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('prix_achat', models.DecimalField(decimal_places=2, max_digits=9, verbose_name="Prix d'achat HT")),
+                ('prix_vente', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Prix de vente HT')),
+                ('taux_tva', models.IntegerField(verbose_name='Taux TVA')),
+                ('shp', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='SHP')),
+                ('ppa_ht', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='PPA')),
+                ('n_lot', models.CharField(max_length=20, verbose_name='Numéro du lot')),
+                ('date_peremption', models.DateField(verbose_name='Date de péremption')),
+                ('colisage', models.IntegerField(verbose_name='Colisage')),
+                ('qtt', models.IntegerField(verbose_name='Quantité')),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='DetailsInventaire',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('prix_achat', models.DecimalField(decimal_places=2, max_digits=9, verbose_name="Prix d'achat HT")),
+                ('prix_vente', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Prix de vente HT')),
+                ('taux_tva', models.IntegerField(verbose_name='Taux TVA')),
+                ('shp', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='SHP')),
+                ('ppa_ht', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='PPA')),
+                ('n_lot', models.CharField(max_length=20, verbose_name='Numéro du lot')),
+                ('date_peremption', models.DateField(verbose_name='Date de péremption')),
+                ('colisage', models.IntegerField(verbose_name='Colisage')),
+                ('poids_boite', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Poids boite')),
+                ('volume_boite', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Volume boite')),
+                ('poids_colis', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Poids du Colis')),
+                ('qtt', models.IntegerField(verbose_name='Quantité')),
+                ('conformite', models.ForeignKey(verbose_name='Statut Produit', on_delete=django.db.models.deletion.PROTECT, to='refereces.StatutProduit')),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('emplacement', models.ForeignKey(verbose_name='Emplacement', on_delete=django.db.models.deletion.PROTECT, to='refereces.Emplacement')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='DetailsTransfert',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('id_in_content_type', models.PositiveIntegerField(verbose_name='Id in content type')),
+                ('content_type', models.PositiveIntegerField(verbose_name='Contenent_type')),
+                ('prix_achat', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Achat HT')),
+                ('prix_vente', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Vente HT')),
+                ('taux_tva', models.IntegerField(verbose_name='TVA')),
+                ('shp', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='SHP')),
+                ('ppa_ht', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='PPA')),
+                ('n_lot', models.CharField(max_length=20, verbose_name='Lot')),
+                ('date_peremption', models.DateField(verbose_name='DDP')),
+                ('colisage', models.IntegerField(verbose_name='Colisage')),
+                ('poids_boite', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Poids boite')),
+                ('volume_boite', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Volume boite')),
+                ('poids_colis', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Poids du Colis')),
+                ('qtt', models.IntegerField(verbose_name='Quantité')),
+                ('conformite', models.ForeignKey(verbose_name='Statut', on_delete=django.db.models.deletion.PROTECT, to='refereces.StatutProduit')),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('depuis_emplacement', models.ForeignKey(verbose_name='Depuis Empl', on_delete=django.db.models.deletion.PROTECT, related_name='depuis_empl', to='refereces.Emplacement')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='EnteteTempo',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('transaction', models.CharField(max_length=30)),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='FacturesClient',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('curr_exercice', models.IntegerField(default=2016, verbose_name='Exrcice en cours')),
+                ('n_commande', models.CharField(max_length=10, verbose_name='Numéro de la facture')),
+                ('date_commande', models.DateField(verbose_name='Date de la facture')),
+                ('client', models.ForeignKey(verbose_name='Client', on_delete=django.db.models.deletion.PROTECT, to='refereces.Client')),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('statut_doc', models.ForeignKey(verbose_name='Statut du document', on_delete=django.db.models.deletion.PROTECT, to='refereces.StatutDocument')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='Inventaire',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('description', models.CharField(max_length=200, verbose_name='Description')),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='MotifsInventaire',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('motif_inventaire', models.CharField(max_length=30, verbose_name="Motif de l'inventaire")),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='Reservation',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('qtt', models.IntegerField(verbose_name='Quantité réservée')),
+                ('entete_tempo', models.ForeignKey(to='flux_physique.EnteteTempo', verbose_name='Entête de la réservation')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Stock',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('id_in_content_type', models.PositiveIntegerField(verbose_name='Id Stock')),
+                ('content_type', models.PositiveIntegerField(verbose_name='Contenent_type')),
+                ('prix_achat', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Achat HT')),
+                ('prix_vente', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Vente HT')),
+                ('taux_tva', models.IntegerField(verbose_name='TVA')),
+                ('shp', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='SHP')),
+                ('ppa_ht', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='PPA')),
+                ('n_lot', models.CharField(max_length=20, verbose_name='Lot')),
+                ('date_peremption', models.DateField(verbose_name='DDP')),
+                ('colisage', models.IntegerField(verbose_name='Colisage')),
+                ('poids_boite', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Poids boite')),
+                ('volume_boite', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Volume boite')),
+                ('poids_colis', models.DecimalField(decimal_places=2, max_digits=9, verbose_name='Poids du Colis')),
+                ('qtt', models.IntegerField(verbose_name='Quantité')),
+                ('motif', models.CharField(max_length=20, verbose_name='Transaction')),
+                ('recu', models.BooleanField(default=False, verbose_name='Reçu')),
+                ('conformite', models.ForeignKey(verbose_name='Statut', on_delete=django.db.models.deletion.PROTECT, to='refereces.StatutProduit')),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('emplacement', models.ForeignKey(verbose_name='Emplacement', on_delete=django.db.models.deletion.PROTECT, to='refereces.Emplacement')),
+                ('produit', models.ForeignKey(verbose_name='Produit', on_delete=django.db.models.deletion.PROTECT, to='refereces.Produit')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='Transfert',
+            fields=[
+                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('created_date', models.DateTimeField(auto_now_add=True)),
+                ('modified_date', models.DateTimeField(auto_now=True)),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('depuis_magasin', models.ForeignKey(verbose_name='Depuis magasin', on_delete=django.db.models.deletion.PROTECT, related_name='+', to='refereces.Magasin')),
+                ('vers_magasin', models.ForeignKey(verbose_name='Vers magasin', on_delete=django.db.models.deletion.PROTECT, to='refereces.Magasin')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.AddField(
+            model_name='reservation',
+            name='id_stock',
+            field=models.ForeignKey(to='flux_physique.Stock', verbose_name='Id Stock'),
+        ),
+        migrations.AddField(
+            model_name='inventaire',
+            name='motif_inventaire',
+            field=models.ForeignKey(verbose_name="Motif de l'inventaire", on_delete=django.db.models.deletion.PROTECT, to='flux_physique.MotifsInventaire'),
+        ),
+        migrations.AddField(
+            model_name='inventaire',
+            name='statut_doc',
+            field=models.ForeignKey(verbose_name='Statut du document', on_delete=django.db.models.deletion.PROTECT, to='refereces.StatutDocument'),
+        ),
+        migrations.AddField(
+            model_name='detailstransfert',
+            name='entete',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='flux_physique.Transfert'),
+        ),
+        migrations.AddField(
+            model_name='detailstransfert',
+            name='produit',
+            field=models.ForeignKey(verbose_name='Produit', on_delete=django.db.models.deletion.PROTECT, to='refereces.Produit'),
+        ),
+        migrations.AddField(
+            model_name='detailstransfert',
+            name='vers_emplacement',
+            field=models.ForeignKey(verbose_name='Vers Empl', on_delete=django.db.models.deletion.PROTECT, related_name='vers_empl', to='refereces.Emplacement'),
+        ),
+        migrations.AddField(
+            model_name='detailsinventaire',
+            name='entete',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='flux_physique.Inventaire'),
+        ),
+        migrations.AddField(
+            model_name='detailsinventaire',
+            name='produit',
+            field=models.ForeignKey(verbose_name='Produit', on_delete=django.db.models.deletion.PROTECT, to='refereces.Produit'),
+        ),
+        migrations.AddField(
+            model_name='detailsfacturesclient',
+            name='facture_client',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='flux_physique.FacturesClient'),
+        ),
+        migrations.AddField(
+            model_name='detailsfacturesclient',
+            name='produit',
+            field=models.ForeignKey(verbose_name='Produit', on_delete=django.db.models.deletion.PROTECT, to='refereces.Produit'),
+        ),
+    ]

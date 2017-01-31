@@ -1,0 +1,130 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mouvenemnt de stock N° {{ transfer.id }} ({{ type_mouvement }})</title>
+
+    <style>
+        @font-face {
+          font-family: 'C39';
+          src: url('{% static 'fonts/c39m3-webfont.woff2' %}') format('woff2'),
+               url('{% static 'fonts/c39m3-webfont.woff' %}') format('woff');
+          font-weight: normal;
+          font-style: normal;
+          }
+        @font-face {
+          font-family: MyUbuntu;
+          src: url('{% static 'fonts/Ubuntu-L.ttf'%}')
+          }
+        h1 {
+            font-family: MyUbuntu;
+            font-size: 16px;
+            }
+        body {
+            font-family: MyUbuntu;
+            font-size: 12px;
+            width: 19.7cm;
+            }
+        table, td, th {
+            border: 1px solid;
+            }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            }
+        th {
+            height: 30px;
+            }
+        td {
+            padding: 3px;
+            }
+        .code_barre {
+            font-family: C39;
+            font-size: 30px;
+            padding: 5px
+            }
+
+</style>
+</head>
+<body>
+
+<!--<h1 align="center">Bon de transfert N°{{ transfer.id }} </h1> -->
+<table>
+    <tr>
+        <th>Depuis magasin</th>
+        <th>Vers magasin</th>
+        <th>Statut</th>
+        <th>Créer par</th>
+        <th>Identifiant</th>
+    </tr>
+    <tr>
+        <td>{{ transfer.depuis_magasin }}</td>
+        <td>{{ transfer.vers_magasin }}</td>
+        <td>{{ transfer.statut_doc }}</td>
+        <td>{{ transfer.created_by.first_name}} {{ transfer.created_by.last_name}}</td>
+        <td class="code_barre" align="center">*{{ transfer.id }}*</td>
+    </tr>
+</table>
+<br>
+<br>
+<table>
+    <tr>
+        <th>Produit</th>
+        <th>N° Lot</th>
+        <th>DDP</th>
+        <th>PPA</th>
+        <th>Old Empl</th>
+        <th>New Empl</th>
+        <th>Colisage</th>
+        <th>NBR Colis</th>
+        <th>VRAC</th>
+        <th>Statut</th>
+    </tr>
+    {% for item in details_transfert %}
+    <tr>
+
+        <td>{{ item.produit__produit}}
+            {{ item.produit__dci__dosage}}
+            {{ item.dci__forme_phrmaceutique__forme}}
+            {{ item.produit__conditionnement}}
+        </td>
+        <td>{{ item.n_lot}}</td>
+        <td>{{ item.date_peremption.isoformat}}</td>
+        <td>{{ item.ppa_ht}}</td>
+        <td>{{ item.depuis_emplacement__emplacement}}</td>
+        <td>{{ item.vers_emplacement__emplacement}}</td>
+        <td>{{ item.colisage}}</td>
+        <td>{{ item.colis}}</td>
+        <td>{{ item.vrac}}</td>
+        <td>{{ item.conformite__statut}}</td>
+        </tr>
+        {% endfor %}
+</table>
+
+<br>
+<br>
+<footer>
+    <table>
+        <tr>
+            <td style="width:25%">Exécuté par :</td>
+            <td style="width:25%">1.</td>
+            <td style="width:25%">2.</td>
+            <td style="width:25%">3.</td>
+        </tr>
+        <tr>
+            <td style="width:25%">Signature :</td>
+            <td style="width:25%"></td>
+            <td style="width:25%"></td>
+            <td style="width:25%; padding-bottom: 30px"></td>
+        </tr>
+    </table>
+
+</footer>
+</body>
+<script>
+    window.onload = function () {
+    window.print();
+}
+</script>
+</html>

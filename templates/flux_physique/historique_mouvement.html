@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% block content %}
+<section class="content-header">
+      <h1>
+        Historique des mouvements du stock
+      </h1>
+
+    </section>
+<section>
+<div class="content">
+<div class="box">
+    <div class="box-header">
+        <form method="post">
+            {% csrf_token %}
+        <div class="row">
+            <div class="col-sm-1">
+                <label for="from_date">Du</label>
+                </div>
+            <div class="col-sm-2">
+                <input id="from_date" name="from_date" class="form-control" type="date" value={{ from_date }}>
+            </div>
+            <div class="col-sm-1">
+                <label for="to_date">Au</label>
+                </div>
+            <div class="col-sm-2">
+                <input id="to_date" name="to_date" class="form-control" type="date" value={{ to_date }}>
+            </div>
+            <div class="col-sm-3">
+                <input type="submit" value="Filtrer" class="btn btn-default">
+            </div>
+        </div>
+            </form>
+
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="mytable1" class="table table-responsive">
+                    <th></th>
+                    <th>N°</th>
+                    <th>Date</th>
+                    <th>Depuis magasin</th>
+                    <th>Vers magasin</th>
+                    <th>Motif</th>
+                    <th>Statut</th>
+                    <th>Créer par</th>
+                    {% for mouvement in mouvements %}
+                        <tr>
+                        <td>
+                            <button class="details btn btn-default btn-xs"
+                                    value="{{ mouvement.id}}"><span class="glyphicon glyphicon-th-list"></span>
+                                </button>
+                            <button class="print btn btn-default btn-xs"
+                                    value="{{ mouvement.id}}"><span class="glyphicon glyphicon-print"></span>
+                                </button>
+                        </td>
+                        <td>{{ mouvement.id}}</td>
+                        <td>{{ mouvement.created_date}}</td>
+                        <td>{{ mouvement.depuis_magasin__magasin}}</td>
+                        <td>{{ mouvement.vers_magasin__magasin}}</td>
+                            <td>{{ mouvement.motif__type}}</td>
+                        <td>{{ mouvement.statut_doc__statut}}</td>
+                        <td>{{ mouvement.created_by__first_name}} {{ mouvement.created_by__last_name}}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                </div>
+        </div>
+    </div>
+    <div class="small-box-footer" align="center">
+
+        <ul class="pagination pagination-centered">
+            {% if mouvements.has_previous %}
+                <li><a href="?page=1"><<</a></li>
+                <li><a href="?page={{ mouvements.previous_page_number }}"><</a></li>
+            {% endif %}
+
+            <li><a>
+                Page {{ mouvements.number }} of {{ mouvements.paginator.num_pages }}</a>
+                </li>
+            {% if mouvements.has_next %}
+                <li><a href="?page={{ mouvements.next_page_number }}">></a></li>
+                <li><a href="?page={{ mouvements.paginator.num_pages }}">>></a></li>
+            {% endif %}
+        </ul>
+
+
+    </div>
+</div>
+</div>
+</section>
+<div class="container">
+ <div class="modal" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title">Mouvement de stock N° <span id="current_transaction"></span></h3>
+        </div>
+        <div class="modal-body">
+          <table id="details_table" class="table table-bordered table-responsive">
+              <th>Produit</th>
+              <th>Lot</th>
+              <th>Péremption</th>
+              <th>PPA</th>
+              <th>Old Empl</th>
+              <th>New Empl</th>
+              <th>Colisage</th>
+              <th>Quantité</th>
+              <th>Statut</th>
+
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function () {
+    $('#entrepot_menu').addClass('active');
+    $('#historique_mouvement').addClass('active');
+    $('.details').click(function () {
+        var current_bon = $(this).val();
+        $.post(
+                '/details-par-mouvement/',
+                {
+                    'categorie': 'detail_par_bon',
+                    'current_mouvement_id': current_bon,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                }
+        ).done(function (data) {
+            $('#details_table').find('td').remove();
+            $('#current_transaction').empty()
+            $.each(data.content, function (i, item) {
+                $('#details_table').append
+                (
+                        '<tr>'
+                        + '<td>' + item.produit__produit
+                        + item.produit__dci__dosage
+                        + item.produit__dci__forme_phrmaceutique__forme
+                        + item.produit__conditionnement + '</td>'
+                        + '<td>' + item.n_lot + '</td>'
+                        + '<td>' + item.date_peremption + '</td>'
+                        + '<td>' + item.ppa_ht + '</td>'
+                        + '<td>' + item.depuis_emplacement__emplacement + '</td>'
+                        + '<td>' + item.vers_emplacement__emplacement + '</td>'
+                        + '<td>' + item.colisage + '</td>'
+                        + '<td>' + item.qtt + '</td>'
+                        + '<td>' + item.conformite__statut + '</td>'
+                        + '</tr>'
+                );
+            });
+            $('#current_transaction').append(current_bon)
+            $('#myModal').modal('show');
+        });
+    });
+    $('.print').click(function () {
+        var current_bon = $(this).val();
+        $.post(
+                '/details-par-mouvement/',
+                {
+                    'categorie': 'print',
+                    'current_mouvement_id': current_bon,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                }
+        ).done(function (data) {
+            var w = window.open('about:blank', 'windowname');
+            w.document.write(data.content);
+            w.document.close()
+        })
+    });
+})
+</script>    
+{% endblock %}

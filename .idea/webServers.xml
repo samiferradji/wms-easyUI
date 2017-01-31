@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="f9ff1536-2ccb-447d-bcec-2e1faca0434e" name="sami" url="http://172.16.5.221">
+        <fileTransfer host="172.16.5.221" port="80">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="80" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

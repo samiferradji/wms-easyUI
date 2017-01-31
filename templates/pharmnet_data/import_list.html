@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% block content %}
+
+    <section class="content-header">
+      <h1>
+        Rapport d'importation
+      </h1>
+
+    </section>
+
+<section class="content-header">
+<div class="box">
+<div class="box-body">
+    <div class="row">
+        <div class="col-lg-6">
+            <table class="table table-bordered">
+        <tr>
+            <td>Laboratoires importes</td>
+            <td>{{ laboratoires }}</td>
+        </tr>
+        <tr>
+            <td>Fournisseurs importes</td>
+            <td>{{ fournisseurs }}</td>
+        </tr>
+        <tr>
+            <td>Entetes d'achats importes</td>
+            <td>{{ achats }}</td>
+        </tr>
+        <tr>
+            <td>Formes pharmaceutiques importees</td>
+            <td>{{ formes_pharmaceutique }}</td>
+        </tr>
+        <tr>
+            <td>DCI importes</td>
+            <td>{{ dci }}</td>
+        </tr>
+        <tr>
+            <td>Emplacements importes</td>
+            <td>{{ count_emplacement }}</td>
+        </tr>
+        <tr>
+            <td>Produits importes</td>
+            <td>{{ count_produit }}</td>
+        </tr>
+        <tr>
+            <td>Lignes Achats importes</td>
+            <td>{{ count_lignes_achats }}</td>
+        </tr>
+
+    </table>
+            </div>
+    </div>
+</div>
+</div>
+
+</section>
+
+{% endblock %}

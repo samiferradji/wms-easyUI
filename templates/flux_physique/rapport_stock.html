@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% block content %}
+<section class="content-header">
+      <h1>
+        Stock
+      </h1>
+
+    </section>
+    </section>
+           <section class="content-header">
+        <button id="export" class="btn btn-primary" style="margin-right: 7px; margin-bottom: 2%"
+        onclick="window.location.href='/stock-csv/'">Exporter</button>
+    </section>
+<section>
+<div class="content">
+<div class="box">
+    <div class="box-header">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-sm-3">
+                    <input id="filtre" class="form-control" value="{{ filtre }}" name="filtre" placeholder="Filtrer">
+                </div>
+                <div class="col-sm-1">
+                    <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-filter"></span></button>
+                </div>
+            </div>
+
+            </form>
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <div class="col-sm-8">
+                <table id="mytable1" class="table table-responsive">
+                    <th></th>
+                    <th>Code</th>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    {% for produit in stock %}
+                        <tr>
+                        <td>
+                            <button class="details btn btn-default btn-xs"
+                                    value="{{ produit.produit}}"
+                                    name="{{ produit.produit__produit}} {{ produit.produit__dci__dosage }}
+                                    {{ produit.produit__dci__forme_phrmaceutique__forme }}
+                                    {{ produit.produit__conditionnement}}">
+                                <span class="glyphicon glyphicon-th-list"></span>
+                                </button>
+                            <button class="btn btn-default btn-xs"
+                                    value="{{ produit.produit}}"
+                                    name="{{ produit.produit__produit}} {{ produit.produit__dci__dosage }}
+                                    {{ produit.produit__dci__forme_phrmaceutique__forme }}
+                                    {{ produit.produit__conditionnement}}">
+                                <span class="glyphicon glyphicon-menu-down"></span>
+                                </button>
+                        </td>
+                        <td>{{ produit.produit__code }}</td>
+                        <td>{{ produit.produit__produit}}
+                            {{ produit.produit__dci__dosage }}
+                            {{ produit.produit__dci__forme_phrmaceutique__forme }}
+                            {{ produit.produit__conditionnement}}
+                        </td>
+                        <td>{{ produit.qtt__sum }}</td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                </div>
+        </div>
+    </div>
+    <div class="small-box-footer" align="center">
+
+        <ul class="pagination pagination-centered">
+            {% if stock.has_previous %}
+                <li><a href="?page=1"><<</a></li>
+                <li><a href="?page={{ stock.previous_page_number }}"><</a></li>
+            {% endif %}
+
+            <li><a>
+                Page {{ stock.number }} of {{ stock.paginator.num_pages }}</a>
+                </li>
+
+            {% if stock.has_next %}
+                <li><a href="?page={{ stock.next_page_number }}">></a></li>
+                <li><a href="?page={{ stock.paginator.num_pages}}">>></a></li>
+            {% endif %}
+        </ul>
+
+
+    </div>
+</div>
+</div>
+</section>
+<div class="container">
+ <div class="modal" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title" id="current_produit"></h3>
+        </div>
+        <div class="modal-body">
+          <table id="details_table" class="table table-bordered table-responsive">
+              <th>Lot</th>
+              <th>Péremption</th>
+              <th>PPA</th>
+              <th>Emplacement</th>
+              <th>Magasin</th>
+              <th>Colisage</th>
+              <th>Quantité</th>
+              <th>Colis</th>
+              <th>Vrac</th>
+              <th>Statut</th>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function () {
+    $('#entrepot_menu').addClass('active');
+    $('#stock').addClass('active');
+    $('.details').click(function () {
+        var current_produit = $(this).val();
+        var current_produit_name = $(this).attr('name');
+        $.post(
+                '/raport-stock-categorie/',
+                {
+                    'categorie': 'produit_par_emplacement',
+                    'current_produit': current_produit,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                }
+        ).done(function (data) {
+            $('#details_table').find('td').remove();
+            $('#current_produit').empty();
+            $.each(data.content, function (i, item) {
+                $('#details_table').append
+                (
+                        '<tr>'
+                        + '<td>' + item.n_lot + '</td>'
+                        + '<td>' + item.date_peremption + '</td>'
+                        + '<td>' + item.ppa_ht + '</td>'
+                        + '<td>' + item.emplacement__emplacement + '</td>'
+                        + '<td>' + item.emplacement__magasin__magasin + '</td>'
+                        + '<td>' + item.colisage + '</td>'
+                        + '<td>' + item.qtt__sum + '</td>'
+                        + '<td>' + item.colis + '</td>'
+                        + '<td>' + item.vrac + '</td>'
+                        + '<td>' + item.conformite__statut + '</td>'
+                        + '</tr>'
+                );
+            });
+            $('#current_produit').append(current_produit_name);
+            $('#myModal').modal('show');
+        });
+    });
+    $('#filtre').focus(function(){
+        $(this).css("background", "#ffefb2");
+    });
+})
+
+</script>    
+{% endblock %}

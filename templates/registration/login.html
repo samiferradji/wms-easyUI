@@ -1,0 +1,82 @@
+{% load staticfiles %}
+{% load admin_urls %}
+{% load bootstrap3 %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Locapro 5.01</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="{% static 'AdminLTE/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'AdminLTE/dist/css/AdminLTE.min.css' %}">
+  <link rel="stylesheet" href="{% static 'AdminLTE/plugins/iCheck/square/blue.css' %}">
+</head>
+<style>
+    @font-face {
+         font-family: 'junegullregular';
+         src: url('{% static 'fonts/junegull-webfont.woff2' %}') format('woff2'),
+              url('{% static 'fonts/junegull-webfont.woff' %}') format('woff');
+         font-weight: normal;
+         font-style: normal;
+
+}
+</style>
+<body class="hold-transition login-page">
+    <div class="login-box">
+       <div class="login-logo">
+           <p style="font-family: junegullregular;font-size: 40px">Locapro 5</p>
+       </div>
+    <div class="login-box-body">
+        <p class="login-box-msg">Connectez-vous pour ouvrir votre session</p>
+        {% if form.errors %}
+        {% endif %}
+    <form method="post" action="../" autocomplete="off" >
+        {% csrf_token %}
+            {% bootstrap_form_errors form %}
+                 <div class="form-group has-feedback">
+                     {% bootstrap_field form.username show_label=false %}
+                     <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                 </div>
+                 <div class="form-group has-feedback">
+                     {% bootstrap_field form.password show_label=false %}
+                     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                 </div>
+            <input type="hidden" name="next" value="/home/" />
+        <div class="row">
+            <div class="col-xs-8">
+                </div>
+            <div class="col-xs-4">
+                <button type="submit" class="btn btn-primary btn-block btn-flat">Log In</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    </div>
+ <script src="{% static 'AdminLTE/plugins/jQuery/jquery-2.2.3.min.js' %}"></script>
+<script src="{% static 'AdminLTE/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'AdminLTE/plugins/iCheck/icheck.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        function style() {
+            $(':input').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' // optional
+            });
+        };
+        function msieversion() {
+            if (/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())) {
+                return true;
+            }
+            else {
+                alert("Pour une utilisation optimale , vous devez utiliser LOCAPRO 5 sur Google Chrome !");
+                $(':input').prop('disabled',true);
+            }
+        }
+        style();
+        msieversion();
+    })
+</script>
+</body>
+</html>
