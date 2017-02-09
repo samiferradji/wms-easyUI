@@ -3,102 +3,297 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta name="keywords" content="jquery,ui,easy,easyui,web">
-	<meta name="description" content="easyui help you build your web page easily!">
-	<title>jQuery EasyUI Demo</title>
+	<title>Locapro 6</title>
 	<link rel="stylesheet" type="text/css" href="{% static 'easyUI/themes/bootstrap/easyui.css'%}" media="screen">
-	<script src="{% static 'AdminLTE/plugins/jQuery/jquery-2.2.3.min.js'%}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'easyUI/themes/icon.css'%}">
-	<script type="text/javascript" src={% static 'easyUI/jquery.easyui.min.js'%}></script>
-	<script type="text/javascript">
-		function showcontent(myurl){
-			$('#transfert').load(myurl);
-		}
-		;
-	</script>
-    <style>
-        label{clear: both;}
-        input{float: left;}
-    </style>
+	<link rel="stylesheet" type="text/css" href="{% static 'easyUI/themes/icon.css'%}">
+	<style>
+
+        </style>
 </head>
-<body style="font-family: 'Liberation Sans'">
+<body style="font-family: 'Ubuntu'">
 	<div class="easyui-layout" fit='true'>
         <div region="north" split="false" title="" style="height:40px;background-color:darkgreen">
-            <span style="padding: 7px; font-size: 25px; color: whitesmoke"><strong>LOCAPRO 5</strong></span>
+            <span style="padding: 7px; font-size: 25px;font-family: 'Ubuntu Light'; color: whitesmoke">
+                <strong>locapro 6</strong>
+            </span>
         </div>
         <div region="west" split="true" title="Menu principal" style="width:250px;">
-			<div class="easyui-accordion" style="width:100%;height:300px;">
-                <div title="Entrepôt" data-options="iconCls:'icon-add'" style="padding:10px;">
-                    <ul class="easyui-datalist" fit="false" lines="true">
-                        <li><a href="javascript:void(0)" onclick="showcontent('/add-transfert/')" >Transfert</a></li>
-                        <li>Entreposage</li>
-                        <li>Sortie colis d'origine</li>
-                        <li>Validation</li>
-                        <li>Stock</li>
-                        <li>Historique</li></ul>
+			<div class="easyui-accordion" style="width:100%">
+                <div title="Entrepôt" data-options="iconCls:'icon-add'" style="padding:5px; width: 100%">
+                    <ul class="easyui-datalist" lines="true" data-options="
+                    onClickRow: function(index,field){
+                                   var target = field.value;
+                                   var title = field.text;
+                                   showcontent(target, title);
+                                }">
+                        <li value="/add-transfert/" title="test">Transfert</li>
+                        <li value="/add-transfert/">Entreposage</li>
+                        <li value="/add-transfert/">Sortie colis d'origine</li>
+                        <li value="/add-transfert/">Validation</li>
+                        <li value="/add-transfert/">Stock</li>
+                        <li value="/add-transfert/">Historique</li></ul>
                     </div>
-                <div title="Achats" data-options="iconCls:'icon-edit'" style="padding:10px;">
+                <div title="Achats" data-options="iconCls:'icon-edit'" style="padding:5px;">
                     <ul class="easyui-datalist" data-options="
-                    onClickCell: function(index,field,value){
-                    var a= $(this).val();
-                    alert(a);
-                    showcontent(value)}"
+                    onClickRow: function(index,field){
+                                   var target= field.value;
+                                   var title = field.text;
+                                   showcontent(target, title);
+                                }"
                         fit="false" lines="true">
-                        <li value="'/add-transfert/'">Importer</li>
-                        <li>Valider</li>
-                        <li>Historique</li>
+                        <li value="/add-transfert/">Importer</li>
+                        <li value="/add-transfert/">Valider</li>
+                        <li value="/add-transfert/">Historique</li>
                     </ul>
                 </div>
             </div>
 		</div>
-		<div id="content" region="center">
+		<div id="content" region="center" fit="true">
             <div id="tt" class="easyui-tabs" fit="true">
-                <div title="Hitoriques des mouvement stock" style="padding:20px;display:none;">
-                    <div id="transfert"></div>
-                    </div>
-                <div title="Transfert" data-options="closable:true" >
+                <div title="Home" data-options="closable:false" >
                     <div style="margin-bottom: 1%; margin-top: 1%">
-                   <a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,
-                   iconCls:'icon-add',iconAlign:'top',size:'large'" onclick="$('#dlg').dialog('open')">Ajouter</a>
+                        <a id="ajouter_lignes_button" href="#" class="easyui-linkbutton" data-options="plain:true,
+                        iconCls:'icon-add',iconAlign:'top',size:'large'">Ajouter</a>
                         <a href="#" class="easyui-linkbutton" data-options="plain:true,
                         iconCls:'icon-save',iconAlign:'top',size:'large'">Enregistrer</a>
                         <a href="#" class="easyui-linkbutton" data-options="plain:true,
                         size:'large',iconCls:'icon-cancel',iconAlign:'top'">Annuler</a>
-
+                        </div>
+                    <div id="p" class="easyui-panel" title="Magasins mouvementés" style="width:100%;height:100px;margin-bottom:3%;">
+                        <div style="margin-top: 2% ;margin-left: 2%; margin-inside: 2%">
+                            <input id="depuis_magasin_cc" style="width:30%; padding-left:5%">
+                            <input id="vers_magasin_cc" style="width:30%;padding-left:5%">
+                            <input id="current_entete" style="display: none">
+                            </div>
+                        </div>
+                    <table id="reservation_table_dg"></table>
                     </div>
-                    <div id="p" class="easyui-panel" title="Magasin" style="width:100%;height:100px;margin-bottom:3%;">
-                    <div>
-                        <input class="easyui-textbox" style="width:30%;" data-options="prompt:'Depuis magasin'">
-    <input class="easyui-textbox" style="width:30%;" data-options="prompt:'Vers magasin'">
-                    </div>
-                    </div>
-             <table class="easyui-datagrid" title="Produits à transférer" pagination="true"
-            rownumbers="true" fitColumns="true" singleSelect="true" fit="true">
-                        <thead>
-        <tr>
-            <th data-options="field:'code'">Code</th>
-            <th data-options="field:'name'">Name</th>
-            <th data-options="field:'price'">Price</th>
-        </tr>
-    </thead>
-    <tbody>
-    
-        <tr>
-            <td>001</td><td>name1</td><td>2323</td>
-        </tr>
-        <tr>
-            <td>002</td><td>name2</td><td>4612</td>
-        </tr>
-    </tbody>
-</table>
-<div id="dlg" class="easyui-dialog" title="Basic Dialog" data-options="iconCls:'icon-add'" style="width:400px;height:200px;padding:10px">
-    <input class="easyui-textbox" label="First Name:" labelPosition="top" style="width:100%;height:52px">
-    <input class="easyui-textbox" label="Last Name:" labelPosition="top" style="width:100%;height:52px">
-    </div>
                 </div>
-                </div>
+            </div>
+        <div id="ajouter_lignes_dd" style="padding: 5%">
+            <div style="margin-bottom:2%">
+                <input id="produit_select_cc" style="width:100%; padding-left:5px; padding-bottom: 10px">
+            </div>
+            <div style="margin-bottom:2%">
+                <input id="lot_select_cc" style="width:100%; padding-left:5px">
+            </div>
+            <div>
+                <input id="input_qtt_tb" type="text" style="width:40%; padding-left: 5px">
             </div>
         </div>
     </div>
+    <script src="{% static 'AdminLTE/plugins/jQuery/jquery-2.2.3.min.js'%}"></script>
+    <script type="text/javascript" src={% static 'easyUI/jquery.easyui.min.js'%}></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $.getJSON(/depuis_magasins_authorised/).done(
+            function (data) {
+                var myliste = data['content'];
+                $('#depuis_magasin_cc').combobox({
+                    data: myliste,
+                    valueField: 'id',
+                    textField: 'magasin',
+                    prompt: 'depuis magasin...',
+                    selectOnNavigation: false,
+                    onSelect: function () {
+                        $('#vers_magasin_cc').combobox('textbox').focus();
+                    }
+                }).combobox('textbox').focus();
+            });
+
+        $.getJSON(/vers_magasins_authorised/).done(
+            function (data) {
+                var myliste = data['content'];
+                $('#vers_magasin_cc').combobox({
+                    data: myliste,
+                    valueField:'id',
+                    textField:'magasin',
+                    selectOnNavigation:false,
+                    prompt: 'vers magasin...',
+                    onSelect: function(){
+                        $.post("/add-entete-reservation/",
+                            {
+                                transaction: "Transfert",
+                                created_by: {{ user.id }},
+                                csrfmiddlewaretoken: '{{ csrf_token }}'
+                            }).done(function(data)
+                        {
+                            if (data.content.code == 200)
+                            {
+                                $('#current_entete').val(data.content.new_id);
+                                $('#ajouter_lignes_button').click();
+                                $('#produit_select_cc').combobox('textbox').focus()
+                            }
+                                else
+                                    {
+                                        $.notify('Error de création du bon temporaire !!')
+                                    }
+                        });
+                        }
+                    });
+                });
+        function showcontent(myurl, title){
+			$('#tt').tabs('add',{
+            title:title,
+            content:'<div id='+title+'></div>',
+            closable:true
+			});
+			$('#'+title).load(myurl);
+		}
+		$('#ajouter_lignes_dd').dialog({
+		    title: 'Ajouter des lignes',
+            width: 500,
+            height: 250,
+            closed: true,
+            cache: false,
+            modal: true,
+            buttons: [{
+                    text:'Ajouter',
+                    iconCls:'icon-add',
+                    handler:function(){
+                        var current_entete = $('#current_entete').val();
+                        var new_id_stock = $('#lot_select_cc').combogrid('getValue');
+                        var current_qtt = $('#input_qtt_tb').textbox('getValue');
+                        $.post("/add-ligne-reservation/",
+                            {
+                                action: 'add',
+                                entete_tempo: current_entete,
+                                id_stock: new_id_stock,
+                                qtt: current_qtt,
+                                csrfmiddlewaretoken: '{{ csrf_token }}'
+                            }).done(function () {
+                                $('#ajouter_lignes_dd').notify('Ligne ajoutée','success');
+                                $('#lot_select_cc').combogrid('clear').combogrid({data:[]});
+                                $('#input_qtt_tb').textbox('clear');
+                                $('#produit_select_cc').combobox('clear').combobox({data:[]}).combobox('textbox').focus();
+
+                                update_reservation_table(current_entete)
+                        })
+
+
+                    }
+                },{
+                    text:'Fermer',
+                    handler:function(){
+                        $('#ajouter_lignes_dd').dialog('close');
+                    }
+                }]
+            });
+        function show_ajouter_lignes_dialog() {
+            $('#ajouter_lignes_dd').dialog('open')
+        }
+        $('#ajouter_lignes_button').click(function () {
+            show_ajouter_lignes_dialog()
+        });
+        var product_loader = function(param,success,error){
+            var q = param.q || '';
+            if (q.length <= 2){return false}
+            $.ajax({
+                url: '/produits_disponibles/',
+                dataType: 'json',
+                data: {
+                    q: q,
+                    maxRows : 15,
+                    current_magasin: $('#depuis_magasin_cc').combobox('getValue')
+                },
+                success: function(data){
+                    var items = $.map(data['content'], function(obj){
+                        return {
+                            id: obj.id,
+                            name: obj.produit
+                        };
+                    });
+                    success(items);
+                },
+                error: function(){
+                    error.apply(this, arguments);
+                }
+            });
+        };
+        $('#produit_select_cc').combobox({
+            loader:product_loader,
+            valueField:'id',
+            textField:'name',
+            prompt:'Produit',
+            mode:'remote',
+            selectOnNavigation:false,
+            onSelect:function (record) {
+                var current_magasin = $('#depuis_magasin_cc').combobox('getValue');
+                var current_produit = record.id;
+
+                $.getJSON('/stock-disponible/', {
+                    'current_produit': current_produit,
+                    'current_magasin': current_magasin
+                }).done(function (dispo_data) {
+                    var mydata = dispo_data.content;
+                    $('#lot_select_cc').combogrid({
+                        panelWidth: 930,
+                        data: mydata,
+                        idField: 'first_id',
+                        textField: 'n_lot',
+                        mode: 'local',
+                        fitColumns: true,
+                        selectOnNavigation: false,
+                        onSelect:function () {
+                            $('#input_qtt_tb').textbox('textbox').focus();
+                        },
+                        columns: [[
+                            {field: 'n_lot', title: 'Lot', width: 90},
+                            {field: 'date_peremption', title: 'DDP', width: 100},
+                            {field: 'ppa_ht', title: 'PPA', width: 70},
+                            {field: 'emplacement__emplacement', title: 'Empl', width: 70},
+                            {field: 'emplacement__magasin__magasin', title: 'Magasin', width: 80},
+                            {field: 'sum_totale', title: 'Total', width: 80},
+                            {field: 'sum_encours_out', title: 'En cours(-)', width: 80},
+                            {field: 'sum_encours_in', title: 'En cours(+)', width: 80},
+                            {field: 'sum_disponible', title: 'Disponible', width: 80},
+                            {field: 'sum_reserved', title: 'Affecté', width: 80},
+                            {field: 'conformite__statut', title: 'Statut', width: 100},
+                        ]],
+                    });
+                    $('#lot_select_cc').combogrid('showPanel').combogrid('textbox').focus();
+                })
+            }
+        });
+        $('#lot_select_cc').combogrid({
+                    prompt:'Lot',
+                    selectOnNavigation:false
+                    });
+        $('#input_qtt_tb').textbox({
+            prompt:'Quantité'
+        });
+        function update_reservation_table(entete) {
+            $.getJSON('/reservation-table/', {current_entete: entete})
+                    .done(
+                            function (data) {
+                                var mydata = data.content
+                            $('#reservation_table_dg').datagrid({
+                                fit:true,
+                                idField: 'id',
+                                data: mydata,
+                                mode: 'local',
+                                fitColumns: false,
+                                rownumbers:true,
+                                striped:true,
+                                columns: [[
+                                    {field: 'id_stock__produit__produit', title: 'Produit', width: 280},
+                                    {field: 'id_stock__n_lot', title: 'Lot', width: 100},
+                                    {field: 'id_stock__date_peremption', title: 'DDP', width: 90},
+                                    {field: 'id_stock__ppa_ht', title: 'PPA', width: 70, align:'right', halign:'left'},
+                                    {field: 'id_stock__emplacement__emplacement', title: 'Empl', width: 80},
+                                    {field: 'id_stock__emplacement__magasin__magasin', title: 'Magasin', width: 100},
+                                    {field: 'id_stock__colisage', title: 'Colisage', width: 70, align:'right', halign:'left'},
+                                    {field: 'qtt', title: 'Quantité', width: 70, align:'right', halign:'left'},
+                                    {field: 'colis', title: 'NBR Colis', width: 70, align:'right', halign:'left'},
+                                    {field: 'vrac', title: 'Vrac', width: 70, align:'right', halign:'left'},
+                                ]]
+                            })})
+                    }
+
+
+    })
+
+</script>
+<script type="text/javascript" src=" {% static 'Notify/notify.min.js' %}" media="screen"></script>
 </body>
 </html>
