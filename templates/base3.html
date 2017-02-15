@@ -1,0 +1,361 @@
+{% load staticfiles %}
+<!doctype html>
+<html lang="en">
+
+<head>
+	<title>Locapro6</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<!-- CSS -->
+    <link rel="stylesheet" href="../static/Base/template/assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../static/Base/template/assets/css/vendor/icon-sets.css">
+	<link rel="stylesheet" href="../static/Base/template/assets/css/main.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'easyUI/themes/bootstrap/easyui.css'%}" media="screen">
+	<!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+
+	<!-- GOOGLE FONTS -->
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+	<!-- ICONS -->
+	<link rel="apple-touch-icon" sizes="76x76" href="../static/Base/template/assets/img/apple-icon.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="../static/Base/template/assets/img/favicon.png">
+</head>
+
+<body>
+	<!-- WRAPPER -->
+	<div id="wrapper">
+		<!-- SIDEBAR -->
+		<div class="sidebar">
+			<div class="brand" style="padding-top: 5px; padding-bottom: 5px">
+				<a href="/base2/"><h2>Locapro 5</h2></a>
+			</div>
+			<div class="sidebar-scroll">
+				<nav>
+					<ul class="nav">
+						<li>
+							<a href="#subPages" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i> <span>Entrepôt</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
+							<div id="subPages" class="collapse">
+								<ul class="nav">
+									<li><a href="page-profile.html" class="">Transfert</a></li>
+									<li><a href="page-login.html" class="">Entreposage</a></li>
+									<li><a href="page-lockscreen.html" class="">Sortie colis d'origine</a></li>
+                                    <li><a href="page-lockscreen.html" class="">Validation</a></li>
+                                    <li><a href="page-lockscreen.html" class="">Stock</a></li>
+                                    <li><a href="page-lockscreen.html" class="">Historique</a></li>
+								</ul>
+							</div>
+						</li>
+                    </ul>
+                    <ul class="nav">
+						<li>
+							<a href="#subPagesA" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i> <span>Achats</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
+							<div id="subPagesA" class="collapse ">
+								<ul class="nav">
+									<li><a href="page-profile.html" class="">Importation</a></li>
+									<li><a href="page-login.html" class="">Validation</a></li>
+									<li><a href="page-lockscreen.html" class="">Historique</a></li>
+								</ul>
+                            </div>
+						</li>
+                    </ul>
+                    <ul class="nav">
+						<li>
+							<a href="#subPagesB" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i> <span>Factures Clients</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
+							<div id="subPagesB" class="collapse ">
+								<ul class="nav">
+									<li><a href="page-profile.html" class="">Importation</a></li>
+									<li><a href="page-login.html" class="">Historique</a></li>
+                                </ul>
+							</div>
+						</li>
+                    </ul>
+				</nav>
+			</div>
+            <a href="#" class="footer">Sami FERRADJI,<br>Utilisateur en cours.</a>
+		</div>
+		<!-- END SIDEBAR -->
+		<!-- MAIN -->
+		<div class="main">
+			<!-- NAVBAR -->
+			<div class="container-fluid">
+                <button type="button" class="btn-toggle-fullwidth">
+                                <i class="lnr lnr-arrow-left"></i></button>
+                <div class="row">
+                        <div class="col-lg-4">
+                            <button id="ajouter_lignes_button" type="button" style="margin-top: 5px"
+                                    class="btn btn-primary" ><i class="lnr lnr-pencil"></i> </button>
+                            <button type="button" class="btn btn-danger" style="margin-top: 5px"
+                                            ><i class="lnr lnr-trash"></i> </button>
+                        </div>
+                        <div class="col-lg-6">
+                                    <button type="button" class="btn btn-success"
+                                            style="margin-top:5px">Enregistrer</button>
+                                    <button type="button" class="btn btn-danger"
+                                            style="margin-top:5px">Annuler</button>
+                        </div>
+                        <div class="col-lg-2">
+                                     <button id="quitter_button" type="button" class="btn btn-danger"
+                                             style="margin-top:5px">Quitter</button>
+                                    </div>
+                            </div>
+                </div>
+			<!-- END NAVBAR -->
+			<!-- MAIN CONTENT -->
+            <div class="main-content">
+				<div class="container-fluid">
+            <div class="panelB panelB-headline">
+								<div class="panelB-heading" style="padding-top: 10px; padding-bottom: 0px">
+									<h2 class="panelB-title">Transfert</h2>
+                                </div>
+								<div class="panelB-body">
+									<div class="row">
+                                        <div class="col-lg-4"><input id="depuis_magasin_cc"
+                                                                     style="width: 100%;padding-left: 15px"></div>
+                                        <div class="col-lg-4"><input id="vers_magasin_cc"
+                                                                     style="width: 100%;padding-left: 15px"></div>
+                                        <div class="col-lg-4"><input class="hidden" id="current_entete"></div>
+                                        </div>
+                                    </div>
+            </div>
+                    <div class="panelB">
+                        <div class="panelB-heading" style="padding-top: 10px; padding-bottom: 0px">
+									<h5 class="panelB-title" style="font-size: 15px">Produits en cours...</h5>
+                                </div>
+                        <div class="panelB-body">
+                    <table id="reservation_table_dg"></table>
+                            </div>
+                    </div>
+                    </div>
+            </div>
+
+			<!-- END MAIN CONTENT -->
+
+		</div>
+		<!-- END MAIN -->
+	</div>
+    <div class="modal" id="ajouter_lignes_dd" role="dialog">
+                    <div class="modal-dialog modal-lg">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Ajouter</h4>
+                                </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <input id="produit_select_cc" class="form-control">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input id="lot_select_cc" style="width: 100%">
+                                        </div>
+                                    <div class="col-md-2">
+                                        <input id="input_qtt_tb" style="width: 100%">
+                                        </div>
+                                    </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+	<!-- END WRAPPER -->
+	<!-- Javascript -->
+    <script src="../static/Base/template/assets/js/jquery/jquery-2.1.0.min.js"></script>
+    <script type="text/javascript" src={% static 'easyUI/jquery.easyui.min.js'%}></script>
+    <script src="../static/Base/template/assets/js/bootstrap/bootstrap.min.js"></script>
+    <script src="../static/Base/template/assets/js/plugins/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="../static/Base/template/assets/js/klorofil.js"></script>
+    <script type="text/javascript" src=" {% static 'Notify/notify.min.js' %}" ></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $.getJSON(/depuis_magasins_authorised/).done(
+            function (data) {
+                var myliste = data['content'];
+                $('#depuis_magasin_cc').combobox({
+                    data: myliste,
+                    valueField: 'id',
+                    textField: 'magasin',
+                    prompt: 'depuis magasin...',
+                    selectOnNavigation: false,
+                    onSelect: function () {
+                        $('#vers_magasin_cc').combobox('textbox').focus();
+                    }
+                }).combobox('textbox').focus();
+            });
+
+        $.getJSON(/vers_magasins_authorised/).done(
+            function (data) {
+                var myliste = data['content'];
+                $('#vers_magasin_cc').combobox({
+                    data: myliste,
+                    valueField:'id',
+                    textField:'magasin',
+                    selectOnNavigation:false,
+                    prompt: 'vers magasin...',
+                    onSelect: function(){
+                        $.post("/add-entete-reservation/",
+                            {
+                                transaction: "Transfert",
+                                created_by: {{ user.id }},
+                                csrfmiddlewaretoken: '{{ csrf_token }}'
+                            }).done(function(data)
+                        {
+                            if (data.content.code == 200)
+                            {
+                                $('#current_entete').val(data.content.new_id);
+                                $('#ajouter_lignes_button').click();
+                            }
+                                else
+                                    {
+                                        $.notify('Error de création du bon temporaire !!')
+                                    }
+                        });
+                        }
+                    });
+                });
+        function show_ajouter_lignes_dialog() {
+            $('#ajouter_lignes_dd').modal();
+            $('#input_qtt_tb').textbox({
+            prompt:'Quantité',
+            type:'number'
+                }).textbox('textbox').bind("keydown", function(e) {
+            if (e.which == 13) {
+                Ajouter_ligne();
+            }
+        });
+            $('#lot_select_cc').combogrid({
+                    prompt:'Lot',
+                    selectOnNavigation:false
+                    });
+                    }
+        $('#ajouter_lignes_button').click(function () {
+            show_ajouter_lignes_dialog();
+            var product_loader = function(param,success,error){
+            var q = param.q || '';
+            if (q.length <= 2){return false}
+            $.ajax({
+                url: '/produits_disponibles/',
+                dataType: 'json',
+                data: {
+                    q: q,
+                    maxRows : 15,
+                    current_magasin: $('#depuis_magasin_cc').combobox('getValue')
+                },
+                success: function(data){
+                    var items = $.map(data['content'], function(obj){
+                        return {
+                            id: obj.id,
+                            name: obj.produit
+                        };
+                    });
+                    success(items);
+                },
+                error: function(){
+                    error.apply(this, arguments);
+                }
+            });
+        };
+            $('#produit_select_cc').combobox({
+            loader:product_loader,
+            valueField:'id',
+            textField:'name',
+            prompt:'Produit',
+            mode:'remote',
+            selectOnNavigation:false,
+            onSelect:function (record) {
+                var current_magasin = $('#depuis_magasin_cc').combobox('getValue');
+                var current_produit = record.id;
+                $.getJSON('/stock-disponible/', {
+                    'current_produit': current_produit,
+                    'current_magasin': current_magasin
+                }).done(function (dispo_data) {
+                    var mydata = dispo_data.content;
+                    $('#lot_select_cc').combogrid({
+                        panelWidth: 930,
+                        data: mydata,
+                        idField: 'first_id',
+                        textField: 'n_lot',
+                        mode: 'local',
+                        fitColumns: true,
+                        selectOnNavigation: false,
+                        onSelect:function () {
+                            $('#input_qtt_tb').textbox('textbox').focus();
+                        },
+                        columns: [[
+                            {field: 'n_lot', title: 'Lot', width: 90},
+                            {field: 'date_peremption', title: 'DDP', width: 100},
+                            {field: 'ppa_ht', title: 'PPA', width: 70},
+                            {field: 'emplacement__emplacement', title: 'Empl', width: 70},
+                            {field: 'emplacement__magasin__magasin', title: 'Magasin', width: 80},
+                            {field: 'sum_totale', title: 'Total', width: 80},
+                            {field: 'sum_encours_out', title: 'En cours(-)', width: 80},
+                            {field: 'sum_encours_in', title: 'En cours(+)', width: 80},
+                            {field: 'sum_disponible', title: 'Disponible', width: 80},
+                            {field: 'sum_reserved', title: 'Affecté', width: 80},
+                            {field: 'conformite__statut', title: 'Statut', width: 100},
+                        ]]
+                    }).combogrid('showpanel').combogrid('textbox').focus();
+                })
+            }
+        });
+        });
+        function update_reservation_table(entete) {
+            $.getJSON('/reservation-table/', {current_entete: entete})
+                    .done(
+                            function (data) {
+                                var mydata = data.content
+                            $('#reservation_table_dg').datagrid({
+                                fit:false,
+                                idField: 'id',
+                                data: mydata,
+                                mode: 'local',
+                                fitColumns: false,
+                                rownumbers:true,
+                                striped:true,
+                                columns: [[
+                                    {field: 'id_stock__produit__produit', title: 'Produit', width: 250},
+                                    {field: 'id_stock__n_lot', title: 'Lot', width: 80},
+                                    {field: 'id_stock__date_peremption', title: 'DDP', width: 80},
+                                    {field: 'id_stock__ppa_ht', title: 'PPA', width: 70, align:'right', halign:'left'},
+                                    {field: 'id_stock__emplacement__emplacement', title: 'Empl', width: 70},
+                                    {field: 'id_stock__emplacement__magasin__magasin', title: 'Magasin', width: 100},
+                                    {field: 'id_stock__colisage', title: 'Colisage', width: 60, align:'right', halign:'left'},
+                                    {field: 'qtt', title: 'Quantité', width: 60, align:'right', halign:'left'},
+                                    {field: 'colis', title: 'NBR Colis', width: 70, align:'right', halign:'left'},
+                                    {field: 'vrac', title: 'Vrac', width: 60, align:'right', halign:'left'},
+                                ]]
+                            })})
+                    }
+        function Ajouter_ligne(){
+                        var current_entete = $('#current_entete').val();
+                        var new_id_stock = $('#lot_select_cc').combogrid('getValue');
+                        var current_qtt = $('#input_qtt_tb').textbox('getValue');
+                        $.post("/add-ligne-reservation/",
+                            {
+                                action: 'add',
+                                entete_tempo: current_entete,
+                                id_stock: new_id_stock,
+                                qtt: current_qtt,
+                                csrfmiddlewaretoken: '{{ csrf_token }}'
+                            }).done(function () {
+                                $('#ajouter_lignes_dd').notify('Ligne ajoutée','success');
+                                $('#lot_select_cc').combogrid('clear').combogrid({data:[]});
+                                $('#input_qtt_tb').textbox('clear');
+                                $('#produit_select_cc').combobox('clear').combobox({data:[]}).combobox('textbox').focus();
+
+                                update_reservation_table(current_entete)
+                        })
+
+
+                    }
+        $('#quitter_button').click(function () {
+            location.href='/logout/';
+        })
+
+        })
+    </script>
+</body>
+
+</html>

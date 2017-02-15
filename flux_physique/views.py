@@ -31,7 +31,32 @@ def home(request):
 
 def base2(request):
     username = ' '.join((request.user.first_name, request.user.last_name))
-    return render(request, 'base2.html', {'username': username})
+    user = request.user
+    product_form = ProductModelForm()
+    form = TransfertModelForm(user=user)
+    return render(request, 'base3.html', {'username': username, 'magasins_form':form})
+
+@ajax
+def depuis_magasins_authorised(request):
+    user = request.user
+    data = Magasin.objects.values('id','magasin').filter(depuismagasinsautorise__user=user)
+    return data
+
+@ajax
+def vers_magasins_authorised(request):
+    user = request.user
+    data = Magasin.objects.values('id','magasin').filter(versmagasinsautorise__user=user)
+    return data
+
+@ajax
+def produits_disponible(request):
+    q = request.GET['q']
+    keys_list = q.split(' ')
+    maxRows = int(request.GET['maxRows'])
+    query = Produit.objects.all().values('id', 'produit').order_by(
+        'produit').filter(reduce(operator.and_, (Q(produit__icontains=x) for x in keys_list))
+                          ).distinct()[:maxRows]
+    return query
 
 @login_required(login_url='/login/')
 def logout_view(request):
@@ -279,9 +304,9 @@ def add_entete_reservation(request):
         if form.is_valid():
             new_tempo_id = form.save()
 
-            return [new_tempo_id.id, ]
+            return {'code': 200, 'new_id': new_tempo_id.id}
         else:
-            return [str(form.errors)]
+            return {'code': 500, 'error': str(form.errors)}
 
 
 def sum_qtt_reserved(id_stock):
@@ -393,7 +418,7 @@ def add_ligne_reservation(request):
 @ajax
 def reservation_table(request):
     current_entete = request.GET['current_entete']
-    queryset = Reservation.objects.values_list(
+    queryset = Reservation.objects.values(
         'id_stock__produit__produit',
         'id_stock__produit__dci__dosage',
         'id_stock__produit__dci__forme_phrmaceutique__forme',
@@ -407,27 +432,18 @@ def reservation_table(request):
         'qtt',
         'id'
     ).filter(entete_tempo__id=current_entete)
-    reservation_list = []
     for item in queryset:
-        item_list = list(item)
-        ddp = item_list[5].isoformat()
-        ppa = str(item_list[6])
-        item_list[6] = ppa
-        item_list[5] = ddp
-        if item_list[9] !=0:
-            vrac = int(item_list[10]) % (item_list[9])
-            item_list.append(vrac)
-            colis = int(item_list[10]) // (item_list[9])
-            item_list.append(colis)
+        item['id_stock__date_peremption'] = item['id_stock__date_peremption'].isoformat()
+        item['id_stock__ppa_ht'] = str(item['id_stock__ppa_ht'])
+        if item['id_stock__colisage'] != 0:
+            item['vrac'] = int(item['qtt']) % (item['id_stock__colisage'])
+            item['colis'] = int(item['qtt']) // (item['id_stock__colisage'])
         else:
-            vrac = item_list[10]
-            item_list.append(vrac)
-            colis = 0
-            item_list.append(colis)
+            item['vrac'] = item['qtt']
+            item['colis'] = 0
 
-        reservation_list.append(item_list)
 
-    return reservation_list
+    return queryset
 
 
 @login_required(login_url='/login/')

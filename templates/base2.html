@@ -10,7 +10,18 @@
 
         </style>
 </head>
-<body style="font-family: 'Ubuntu'">
+<body style="font-family: 'Ubuntu">
+<script type="text/javascript">
+    function showcontent(myurl, title) {
+        $.get(myurl, function (content) {
+            $('#tt').tabs('add', {
+                title: title,
+                content: content,
+                closable: true
+            });
+        })
+    }
+</script>
 	<div class="easyui-layout" fit='true'>
         <div region="north" split="false" title="" style="height:40px;background-color:darkgreen">
             <span style="padding: 7px; font-size: 25px;font-family: 'Ubuntu Light'; color: whitesmoke">
@@ -26,9 +37,9 @@
                                    var title = field.text;
                                    showcontent(target, title);
                                 }">
-                        <li value="/add-transfert/" title="test">Transfert</li>
+                        <li value="/add-transfert/">Transfert</li>
                         <li value="/add-transfert/">Entreposage</li>
-                        <li value="/add-transfert/">Sortie colis d'origine</li>
+                        <li value="/add-sortie-colis/">Sortie colis d'origine</li>
                         <li value="/add-transfert/">Validation</li>
                         <li value="/add-transfert/">Stock</li>
                         <li value="/add-transfert/">Historique</li></ul>
@@ -48,252 +59,14 @@
                 </div>
             </div>
 		</div>
-		<div id="content" region="center" fit="true">
+        <div id="content" region="center" fit="true">
             <div id="tt" class="easyui-tabs" fit="true">
-                <div title="Home" data-options="closable:false" >
-                    <div style="margin-bottom: 1%; margin-top: 1%">
-                        <a id="ajouter_lignes_button" href="#" class="easyui-linkbutton" data-options="plain:true,
-                        iconCls:'icon-add',iconAlign:'top',size:'large'">Ajouter</a>
-                        <a href="#" class="easyui-linkbutton" data-options="plain:true,
-                        iconCls:'icon-save',iconAlign:'top',size:'large'">Enregistrer</a>
-                        <a href="#" class="easyui-linkbutton" data-options="plain:true,
-                        size:'large',iconCls:'icon-cancel',iconAlign:'top'">Annuler</a>
-                        </div>
-                    <div id="p" class="easyui-panel" title="Magasins mouvementés" style="width:100%;height:100px;margin-bottom:3%;">
-                        <div style="margin-top: 2% ;margin-left: 2%; margin-inside: 2%">
-                            <input id="depuis_magasin_cc" style="width:30%; padding-left:5%">
-                            <input id="vers_magasin_cc" style="width:30%;padding-left:5%">
-                            <input id="current_entete" style="display: none">
-                            </div>
-                        </div>
-                    <table id="reservation_table_dg"></table>
-                    </div>
                 </div>
-            </div>
-        <div id="ajouter_lignes_dd" style="padding: 5%">
-            <div style="margin-bottom:2%">
-                <input id="produit_select_cc" style="width:100%; padding-left:5px; padding-bottom: 10px">
-            </div>
-            <div style="margin-bottom:2%">
-                <input id="lot_select_cc" style="width:100%; padding-left:5px">
-            </div>
-            <div>
-                <input id="input_qtt_tb" type="text" style="width:40%; padding-left: 5px">
             </div>
         </div>
     </div>
-    <script src="{% static 'AdminLTE/plugins/jQuery/jquery-2.2.3.min.js'%}"></script>
-    <script type="text/javascript" src={% static 'easyUI/jquery.easyui.min.js'%}></script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $.getJSON(/depuis_magasins_authorised/).done(
-            function (data) {
-                var myliste = data['content'];
-                $('#depuis_magasin_cc').combobox({
-                    data: myliste,
-                    valueField: 'id',
-                    textField: 'magasin',
-                    prompt: 'depuis magasin...',
-                    selectOnNavigation: false,
-                    onSelect: function () {
-                        $('#vers_magasin_cc').combobox('textbox').focus();
-                    }
-                }).combobox('textbox').focus();
-            });
-
-        $.getJSON(/vers_magasins_authorised/).done(
-            function (data) {
-                var myliste = data['content'];
-                $('#vers_magasin_cc').combobox({
-                    data: myliste,
-                    valueField:'id',
-                    textField:'magasin',
-                    selectOnNavigation:false,
-                    prompt: 'vers magasin...',
-                    onSelect: function(){
-                        $.post("/add-entete-reservation/",
-                            {
-                                transaction: "Transfert",
-                                created_by: {{ user.id }},
-                                csrfmiddlewaretoken: '{{ csrf_token }}'
-                            }).done(function(data)
-                        {
-                            if (data.content.code == 200)
-                            {
-                                $('#current_entete').val(data.content.new_id);
-                                $('#ajouter_lignes_button').click();
-                                $('#produit_select_cc').combobox('textbox').focus()
-                            }
-                                else
-                                    {
-                                        $.notify('Error de création du bon temporaire !!')
-                                    }
-                        });
-                        }
-                    });
-                });
-        function showcontent(myurl, title){
-			$('#tt').tabs('add',{
-            title:title,
-            content:'<div id='+title+'></div>',
-            closable:true
-			});
-			$('#'+title).load(myurl);
-		}
-		$('#ajouter_lignes_dd').dialog({
-		    title: 'Ajouter des lignes',
-            width: 500,
-            height: 250,
-            closed: true,
-            cache: false,
-            modal: true,
-            buttons: [{
-                    text:'Ajouter',
-                    iconCls:'icon-add',
-                    handler:function(){
-                        var current_entete = $('#current_entete').val();
-                        var new_id_stock = $('#lot_select_cc').combogrid('getValue');
-                        var current_qtt = $('#input_qtt_tb').textbox('getValue');
-                        $.post("/add-ligne-reservation/",
-                            {
-                                action: 'add',
-                                entete_tempo: current_entete,
-                                id_stock: new_id_stock,
-                                qtt: current_qtt,
-                                csrfmiddlewaretoken: '{{ csrf_token }}'
-                            }).done(function () {
-                                $('#ajouter_lignes_dd').notify('Ligne ajoutée','success');
-                                $('#lot_select_cc').combogrid('clear').combogrid({data:[]});
-                                $('#input_qtt_tb').textbox('clear');
-                                $('#produit_select_cc').combobox('clear').combobox({data:[]}).combobox('textbox').focus();
-
-                                update_reservation_table(current_entete)
-                        })
-
-
-                    }
-                },{
-                    text:'Fermer',
-                    handler:function(){
-                        $('#ajouter_lignes_dd').dialog('close');
-                    }
-                }]
-            });
-        function show_ajouter_lignes_dialog() {
-            $('#ajouter_lignes_dd').dialog('open')
-        }
-        $('#ajouter_lignes_button').click(function () {
-            show_ajouter_lignes_dialog()
-        });
-        var product_loader = function(param,success,error){
-            var q = param.q || '';
-            if (q.length <= 2){return false}
-            $.ajax({
-                url: '/produits_disponibles/',
-                dataType: 'json',
-                data: {
-                    q: q,
-                    maxRows : 15,
-                    current_magasin: $('#depuis_magasin_cc').combobox('getValue')
-                },
-                success: function(data){
-                    var items = $.map(data['content'], function(obj){
-                        return {
-                            id: obj.id,
-                            name: obj.produit
-                        };
-                    });
-                    success(items);
-                },
-                error: function(){
-                    error.apply(this, arguments);
-                }
-            });
-        };
-        $('#produit_select_cc').combobox({
-            loader:product_loader,
-            valueField:'id',
-            textField:'name',
-            prompt:'Produit',
-            mode:'remote',
-            selectOnNavigation:false,
-            onSelect:function (record) {
-                var current_magasin = $('#depuis_magasin_cc').combobox('getValue');
-                var current_produit = record.id;
-
-                $.getJSON('/stock-disponible/', {
-                    'current_produit': current_produit,
-                    'current_magasin': current_magasin
-                }).done(function (dispo_data) {
-                    var mydata = dispo_data.content;
-                    $('#lot_select_cc').combogrid({
-                        panelWidth: 930,
-                        data: mydata,
-                        idField: 'first_id',
-                        textField: 'n_lot',
-                        mode: 'local',
-                        fitColumns: true,
-                        selectOnNavigation: false,
-                        onSelect:function () {
-                            $('#input_qtt_tb').textbox('textbox').focus();
-                        },
-                        columns: [[
-                            {field: 'n_lot', title: 'Lot', width: 90},
-                            {field: 'date_peremption', title: 'DDP', width: 100},
-                            {field: 'ppa_ht', title: 'PPA', width: 70},
-                            {field: 'emplacement__emplacement', title: 'Empl', width: 70},
-                            {field: 'emplacement__magasin__magasin', title: 'Magasin', width: 80},
-                            {field: 'sum_totale', title: 'Total', width: 80},
-                            {field: 'sum_encours_out', title: 'En cours(-)', width: 80},
-                            {field: 'sum_encours_in', title: 'En cours(+)', width: 80},
-                            {field: 'sum_disponible', title: 'Disponible', width: 80},
-                            {field: 'sum_reserved', title: 'Affecté', width: 80},
-                            {field: 'conformite__statut', title: 'Statut', width: 100},
-                        ]],
-                    });
-                    $('#lot_select_cc').combogrid('showPanel').combogrid('textbox').focus();
-                })
-            }
-        });
-        $('#lot_select_cc').combogrid({
-                    prompt:'Lot',
-                    selectOnNavigation:false
-                    });
-        $('#input_qtt_tb').textbox({
-            prompt:'Quantité'
-        });
-        function update_reservation_table(entete) {
-            $.getJSON('/reservation-table/', {current_entete: entete})
-                    .done(
-                            function (data) {
-                                var mydata = data.content
-                            $('#reservation_table_dg').datagrid({
-                                fit:true,
-                                idField: 'id',
-                                data: mydata,
-                                mode: 'local',
-                                fitColumns: false,
-                                rownumbers:true,
-                                striped:true,
-                                columns: [[
-                                    {field: 'id_stock__produit__produit', title: 'Produit', width: 280},
-                                    {field: 'id_stock__n_lot', title: 'Lot', width: 100},
-                                    {field: 'id_stock__date_peremption', title: 'DDP', width: 90},
-                                    {field: 'id_stock__ppa_ht', title: 'PPA', width: 70, align:'right', halign:'left'},
-                                    {field: 'id_stock__emplacement__emplacement', title: 'Empl', width: 80},
-                                    {field: 'id_stock__emplacement__magasin__magasin', title: 'Magasin', width: 100},
-                                    {field: 'id_stock__colisage', title: 'Colisage', width: 70, align:'right', halign:'left'},
-                                    {field: 'qtt', title: 'Quantité', width: 70, align:'right', halign:'left'},
-                                    {field: 'colis', title: 'NBR Colis', width: 70, align:'right', halign:'left'},
-                                    {field: 'vrac', title: 'Vrac', width: 70, align:'right', halign:'left'},
-                                ]]
-                            })})
-                    }
-
-
-    })
-
-</script>
-<script type="text/javascript" src=" {% static 'Notify/notify.min.js' %}" media="screen"></script>
 </body>
 </html>
+<script type="text/javascript" src="{% static 'AdminLTE/plugins/jQuery/jquery-2.2.3.min.js'%}"></script>
+<script type="text/javascript" src={% static 'easyUI/jquery.easyui.min.js'%}></script>
+<script type="text/javascript" src=" {% static 'Notify/notify.min.js' %}" ></script>

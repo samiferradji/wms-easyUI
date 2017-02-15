@@ -1,70 +1,67 @@
 {% load staticfiles %}
 {% load admin_urls %}
 {% load bootstrap3 %}
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Locapro 5.01</title>
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="stylesheet" href="{% static 'AdminLTE/bootstrap/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'AdminLTE/dist/css/AdminLTE.min.css' %}">
-  <link rel="stylesheet" href="{% static 'AdminLTE/plugins/iCheck/square/blue.css' %}">
-</head>
-<style>
-    @font-face {
-         font-family: 'junegullregular';
-         src: url('{% static 'fonts/junegull-webfont.woff2' %}') format('woff2'),
-              url('{% static 'fonts/junegull-webfont.woff' %}') format('woff');
-         font-weight: normal;
-         font-style: normal;
+<!doctype html>
+<html lang="en">
 
-}
-</style>
-<body class="hold-transition login-page">
-    <div class="login-box">
-       <div class="login-logo">
-           <p style="font-family: junegullregular;font-size: 40px">Locapro 5</p>
-       </div>
-    <div class="login-box-body">
-        <p class="login-box-msg">Connectez-vous pour ouvrir votre session</p>
-        {% if form.errors %}
-        {% endif %}
-    <form method="post" action="../" autocomplete="off" >
+<head>
+	<title>Locapro6</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<!-- CSS -->
+    <link rel="stylesheet" href="../../static/Base/template/assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../static/Base/template/assets/css/vendor/icon-sets.css">
+	<link rel="stylesheet" href="../../static/Base/template/assets/css/main.css">
+    	<!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+
+	<!-- GOOGLE FONTS -->
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+	<!-- ICONS -->
+	<link rel="apple-touch-icon" sizes="76x76" href="../../static/Base/template/assets/img/apple-icon.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="../../static/Base/template/assets/img/favicon.png">
+</head>
+
+<body>
+	<!-- WRAPPER -->
+	<div id="wrapper">
+		<div class="vertical-align-wrap">
+			<div class="vertical-align-middle">
+				<div class="auth-box ">
+					<div class="left">
+						<div class="content">
+							<div class="logo text-center"><h1>Locapro 5</h1></div>
+							<form method="post" class="form-auth-small" action="" autocomplete="off" >
         {% csrf_token %}
             {% bootstrap_form_errors form %}
-                 <div class="form-group has-feedback">
+                 <div class="form-group">
                      {% bootstrap_field form.username show_label=false %}
-                     <span class="glyphicon glyphicon-user form-control-feedback"></span>
-                 </div>
-                 <div class="form-group has-feedback">
+                     </div>
+                 <div class="form-group">
                      {% bootstrap_field form.password show_label=false %}
-                     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-                 </div>
-            <input type="hidden" name="next" value="/home/" />
-        <div class="row">
-            <div class="col-xs-8">
-                </div>
-            <div class="col-xs-4">
+                     </div>
+            <input type="hidden" name="next" value="/base2/" />
+
                 <button type="submit" class="btn btn-primary btn-block btn-flat">Log In</button>
-                </div>
-            </div>
+
         </form>
-    </div>
-    </div>
- <script src="{% static 'AdminLTE/plugins/jQuery/jquery-2.2.3.min.js' %}"></script>
-<script src="{% static 'AdminLTE/bootstrap/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'AdminLTE/plugins/iCheck/icheck.min.js' %}"></script>
+						</div>
+					</div>
+					<div class="right">
+						<div class="overlay"></div>
+						<div class="content text">
+							<h1 class="heading">Groupe Hydrapharm</h1>
+							<p>2017</p>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END WRAPPER -->
 <script>
     $(document).ready(function () {
-        function style() {
-            $(':input').iCheck({
-                checkboxClass: 'icheckbox_square-blue',
-                radioClass: 'iradio_square-blue',
-                increaseArea: '20%' // optional
-            });
-        };
         function msieversion() {
             if (/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())) {
                 return true;
@@ -74,7 +71,6 @@
                 $(':input').prop('disabled',true);
             }
         }
-        style();
         msieversion();
     })
 </script>

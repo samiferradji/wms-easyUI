@@ -50,6 +50,9 @@ urlpatterns = patterns(
     url(r'^liste-des-produit/', views.list_des_produit, name='liste-des-produit'),
     url(r'^import/', import_data),
     url(r'^base2/', views.base2),
+    url(r'^depuis_magasins_authorised/', views.depuis_magasins_authorised),
+    url(r'^vers_magasins_authorised/', views.vers_magasins_authorised),
+    url(r'^produits_disponibles/', views.produits_disponible)
 )
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns  += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -13,8 +13,8 @@ class TransfertModelForm(ModelForm):
         model = Transfert
         fields = ('depuis_magasin','vers_magasin','statut_doc','created_by')
         widgets = {
-            'depuis_magasin': Select(attrs={'id': 'depuis_magasin_select'}),
-            'vers_magasin': Select(attrs={'id': 'vers_magasin_select'}),
+            'depuis_magasin': Select(attrs={'id': 'depuis_magasin_select','class':'easyui-combobox'}),
+            'vers_magasin': Select(attrs={'id': 'vers_magasin_select', 'class':'easyui-combobox'}),
             'statut_doc': TextInput(attrs={'id': 'statut_doc', 'value': default_statut_doc}),
         }
     def __init__(self, user=None, **kwargs):
